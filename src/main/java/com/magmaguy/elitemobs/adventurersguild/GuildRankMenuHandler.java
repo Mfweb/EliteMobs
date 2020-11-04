@@ -106,7 +106,7 @@ public class GuildRankMenuHandler implements Listener {
         //
         //EconomyHandler.setCurrency(player.getUniqueId(), 0);
         // 解锁声望后使用Vault不会清空问题
-        EconomyHandler.subtractCurrency(player.getUniqueId(), EconomyHandler.checkCurrency(player.getUniqueId()));
+        EconomyHandler.subtractCurrency(player.getUniqueId(), EconomyHandler.checkCurrency(player.getUniqueId()) - 0.001);
         GuildRank.setMaxGuildRank(player, 1);
         GuildRank.setActiveGuildRank(player, 1);
         GuildRank.setGuildPrestigeRank(player, GuildRank.getGuildPrestigeRank(player) + 1);

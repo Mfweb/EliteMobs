@@ -42,8 +42,8 @@ public class QuestsMenu implements Listener {
 
         if (!PlayerQuests.hasQuest(player, eliteQuest)) {
             PlayerQuests.addQuest(player, eliteQuest);
-            player.sendMessage("You've accepted a quest!");
-            player.sendMessage("Objective: kill " + eliteQuest.getQuestObjective().getObjectiveKills() + " level " + eliteQuest.getQuestObjective().getMinimumEliteMobLevel() + "+ " + eliteQuest.getQuestObjective().getEliteMobName());
+            player.sendMessage("你已经接受任务!");
+            player.sendMessage("目标: 杀死 " + eliteQuest.getQuestObjective().getMinimumEliteMobLevel() + "级的" + eliteQuest.getQuestObjective().getEliteMobName() + eliteQuest.getQuestObjective().getObjectiveKills() + "只");
             player.closeInventory();
         }
 

@@ -39,7 +39,7 @@ public class ZoneWarner implements Listener {
                     TextComponent.fromLegacyText(
                             ChatColorConverter.convert("&7你已经进入 &c"
                                     + Grid.getChunkMap().get(Grid.getEliteChunk(player.getLocation()))
-                                    + " &7 级BOG区域 (" + Grid.getEliteChunk(player.getLocation()).getxCoord() + "," +
+                                    + " &7级BOG区域 (" + Grid.getEliteChunk(player.getLocation()).getxCoord() + "," +
                                     Grid.getEliteChunk(player.getLocation()).getzCoord() + ")")));
         } catch (Exception ex) {
             new WarningMessage("Failed to get the chunk region. This may be normal if you're trying to move around while EliteMobs is still starting up.");
