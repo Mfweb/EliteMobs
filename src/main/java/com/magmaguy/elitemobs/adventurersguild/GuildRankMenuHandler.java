@@ -103,13 +103,16 @@ public class GuildRankMenuHandler implements Listener {
             return;
         if (EconomyHandler.checkCurrency(player.getUniqueId()) < tierPriceCalculator(GuildRank.getGuildPrestigeRank(player) + 12, GuildRank.getGuildPrestigeRank(player)))
             return;
-        EconomyHandler.setCurrency(player.getUniqueId(), 0);
+        //
+        //EconomyHandler.setCurrency(player.getUniqueId(), 0);
+        // 解锁声望后使用Vault不会清空问题
+        EconomyHandler.subtractCurrency(player.getUniqueId(), EconomyHandler.checkCurrency(player.getUniqueId()));
         GuildRank.setMaxGuildRank(player, 1);
         GuildRank.setActiveGuildRank(player, 1);
         GuildRank.setGuildPrestigeRank(player, GuildRank.getGuildPrestigeRank(player) + 1);
 
         for (Player iteratedPlayer : Bukkit.getOnlinePlayers()) {
-            iteratedPlayer.sendTitle(player.getDisplayName(), ChatColor.DARK_GREEN + "has unlocked Prestige " + GuildRank.getGuildPrestigeRank(player) + "!");
+            iteratedPlayer.sendTitle(player.getDisplayName(), ChatColor.DARK_GREEN + "已解锁声望 " + GuildRank.getGuildPrestigeRank(player) + "!");
         }
         player.closeInventory();
         if (!AdventurersGuildConfig.onPrestigeUpCommand.isEmpty())

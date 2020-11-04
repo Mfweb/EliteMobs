@@ -86,7 +86,7 @@ public class SoulbindEnchantment extends CustomEnchantment {
                         EnchantmentsConfig.getEnchantment("soulbind.yml")
                                 .getFileConfiguration().getString("loreString").replace("$player", player.getDisplayName())));
         if (GuildRank.getGuildPrestigeRank(player) > 0)
-            lore.add(ChatColorConverter.convert("Prestige " + GuildRank.getGuildPrestigeRank(player)));
+            lore.add(ChatColorConverter.convert("声望 " + GuildRank.getGuildPrestigeRank(player)));
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
