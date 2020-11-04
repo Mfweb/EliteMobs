@@ -93,6 +93,7 @@ public class NaturalMobSpawnEventHandler implements Listener {
             return;
 
         if (ValidWorldsConfig.fileConfiguration.getBoolean("Zone-based elitemob spawning worlds." + livingEntity.getWorld().getName())) {
+            // 基于距离生成怪物等级的世界
             int eliteMobLevel = (int) (Grid.getMobTierFromLocation(livingEntity.getLocation()) * MobCombatSettingsConfig.perTierLevelIncrease);
             EliteMobEntity eliteMobEntity = new EliteMobEntity(livingEntity, eliteMobLevel, event.getSpawnReason());
             if (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER))
@@ -138,7 +139,9 @@ public class NaturalMobSpawnEventHandler implements Listener {
         for (CustomBossConfigFields customBossConfigFields : CustomBossConfigFields.getNaturallySpawnedElites())
             if (entity.getType().toString().equalsIgnoreCase(customBossConfigFields.getEntityType()))
                 if (ThreadLocalRandom.current().nextDouble() < customBossConfigFields.getSpawnChance()) {
-                    CustomBossEntity.constructCustomBoss(customBossConfigFields.getFileName(), entity.getLocation(), eliteMobLevel);
+                    // 动态等级生成与静态等级
+                    CustomBossEntity.constructCustomBoss(customBossConfigFields.getFileName(), entity.getLocation(), 
+                                                            customBossConfigFields.getLevel().equalsIgnoreCase("dynamic") ? eliteMobLevel : Integer.valueOf(customBossConfigFields.getLevel()));
                     return;
                 }
 
