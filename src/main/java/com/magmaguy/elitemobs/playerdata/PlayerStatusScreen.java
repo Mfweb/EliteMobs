@@ -150,7 +150,7 @@ public class PlayerStatusScreen implements Listener {
 
         for (int i = 0; i < 13; i++) {
             TextComponent line = new TextComponent(PlayerStatusMenuConfig.statsTextLines[i]
-                    .replace("$money", EconomyHandler.checkCurrency(targetPlayer.getUniqueId()) + "")
+                    .replace("$money", String.format("%.2f", EconomyHandler.checkCurrency(targetPlayer.getUniqueId())))
                     .replace("$guildtier", AdventurersGuildConfig.getShortenedRankName(GuildRank.getGuildPrestigeRank(targetPlayer), GuildRank.getActiveGuildRank(targetPlayer)))
                     .replace("$kills", PlayerData.getKills(targetPlayer.getUniqueId()) + "")
                     .replace("$highestkill", PlayerData.getHighestLevelKilled(targetPlayer.getUniqueId()) + "")

@@ -75,7 +75,7 @@ public class GuildRankMenuHandler implements Listener {
         if (EconomyHandler.checkCurrency(player.getUniqueId()) < price) {
             player.sendMessage(GuildRankMenuConfig.notEnoughCurrencyMessage
                     .replace("$neededAmount", tierPriceCalculator(guildRank, GuildRank.getGuildPrestigeRank(player)) + "")
-                    .replace("$currentAmount", EconomyHandler.checkCurrency(player.getUniqueId()) + "")
+                    .replace("$currentAmount", String.format("%.2f", EconomyHandler.checkCurrency(player.getUniqueId())))
                     .replace("$currencyName", EconomySettingsConfig.currencyName));
             return;
         }
@@ -281,7 +281,7 @@ public class GuildRankMenuHandler implements Listener {
                     }
                     if (string.contains("$currentCurrency")) {
                         newLore.add(string
-                                .replace("$currentCurrency", EconomyHandler.checkCurrency(player.getUniqueId()) + "")
+                                .replace("$currentCurrency", String.format("%.2f", EconomyHandler.checkCurrency(player.getUniqueId())))
                                 .replace("$currencyName", EconomySettingsConfig.currencyName));
                         continue;
                     }

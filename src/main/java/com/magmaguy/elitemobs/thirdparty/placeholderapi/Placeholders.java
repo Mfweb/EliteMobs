@@ -111,7 +111,7 @@ public class Placeholders extends PlaceholderExpansion {
             case "player_prestige_guild_rank_numerical":
                 return "" + GuildRank.getGuildPrestigeRank(player, false);
             case "player_money":
-                return "" + EconomyHandler.checkCurrency(player.getUniqueId());
+                return String.format("%.2f", EconomyHandler.checkCurrency(player.getUniqueId()));
             case "player_top_tier":
                 double highestThreat = 0;
                 for (Player iteratedPlayer : Bukkit.getOnlinePlayers()) {

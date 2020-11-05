@@ -46,7 +46,7 @@ public class SharedShopElements {
                 player.sendMessage(
                         ChatColorConverter.convert(
                                 ConfigValues.translationConfig.getString(TranslationConfig.SHOP_CURRENT_BALANCE)
-                                        .replace("$currency_amount", EconomyHandler.checkCurrency(player.getUniqueId()) + "")
+                                        .replace("$currency_amount", String.format("%.2f", EconomyHandler.checkCurrency(player.getUniqueId())))
                                         .replace("$currency_name", EconomySettingsConfig.currencyName)));
 
 
@@ -72,7 +72,7 @@ public class SharedShopElements {
                 player.sendMessage(
                         ChatColorConverter.convert(
                                 ConfigValues.translationConfig.getString(TranslationConfig.SHOP_CURRENT_BALANCE)
-                                        .replace("$currency_amount", EconomyHandler.checkCurrency(player.getUniqueId()) + "")
+                                        .replace("$currency_amount", String.format("%.2f", EconomyHandler.checkCurrency(player.getUniqueId())))
                                         .replace("$currency_name", EconomySettingsConfig.currencyName)));
 
                 player.sendMessage(
