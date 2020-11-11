@@ -49,6 +49,7 @@ public class CommandHandler implements CommandExecutor {
     public static final String DISCORD = "elitemobs.discord";
     public static final String DEBUG = "elitemobs.debug";
     public static final String SET_RANK = "elitemobs.maxrank";
+    public static final String CLEAR_DAY_CURRENCY = "elitemobs.cleardaycurrency";
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {

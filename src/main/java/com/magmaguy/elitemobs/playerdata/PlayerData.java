@@ -13,6 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import jdk.javadoc.internal.doclets.formats.html.resources.standard;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class PlayerData {
 
     private static final HashMap<UUID, PlayerData> playerDataHashMap = new HashMap<>();
+    private static final int RatioMap[] = { 12375, 15000, 35750, 42000, 73125, 84000, 127500, 144000, 201875, 225000, 299250 };
 
     public static void clearPlayerData(UUID uuid) {
         playerDataHashMap.remove(uuid);
@@ -68,6 +71,37 @@ public class PlayerData {
         setDatabaseValue(uuid, "Currency", currency);
         if (playerDataHashMap.containsKey(uuid))
             playerDataHashMap.get(uuid).currency = currency;
+    }
+
+    public static double getCurrencyDayCount(UUID uuid) {
+        if (!isInMemory(uuid))
+            return getDatabaseDouble(uuid, "CurrencyDayCount");
+        return playerDataHashMap.get(uuid).currencyDayCount;
+    }
+
+    public static void setCurrencyDayCount(UUID uuid, double newCurrencyDayCount) {
+        setDatabaseValue(uuid, "CurrencyDayCount", newCurrencyDayCount);
+        if (playerDataHashMap.containsKey(uuid))
+            playerDataHashMap.get(uuid).currencyDayCount = newCurrencyDayCount;
+    }
+
+    public static void addCurrencyDayCount(UUID uuid, double count) {
+        setCurrencyDayCount(uuid, getCurrencyDayCount(uuid) + count);
+    }
+
+    public static double getCurrencyDayRatio(UUID uuid) {
+        double todayCurrency = getCurrencyDayCount(uuid);
+        int userLevel = getGuildPrestigeLevel(uuid);
+        if(RatioMap[userLevel] >= todayCurrency) return 1.0;
+        if(todayCurrency >= RatioMap[userLevel] * 1.5) return 0.0;
+        return 1 - (todayCurrency - RatioMap[userLevel]) / (RatioMap[userLevel] / 2);
+    }
+
+    public static void clearCurrencyDayCount() {
+        playerDataHashMap.forEach((k, v)->{
+            setCurrencyDayCount(k, 0);
+        });
+        clearCurrencyDayCountDatabase();
     }
 
     public static int getGuildPrestigeLevel(UUID uuid) {
@@ -341,10 +375,27 @@ public class PlayerData {
         }
     }
 
-    private double currency;
+    private double currency, currencyDayCount;
     private int guildPrestigeLevel, maxGuildLevel, activeGuildLevel, score, kills, highestLevelKilled, deaths, questsCompleted;
     private PlayerQuests questStatus;
 
+    private static void clearCurrencyDayCountDatabase() {
+        Statement statement = null;
+        try {
+            statement = getConnection().createStatement();
+            String sql;
+            sql = "UPDATE " + player_data_table_name + " SET CurrencyDayCount=0.0 WHERE 1;";
+            statement.executeUpdate(sql);
+            statement.close();
+
+            getConnection().commit();
+            getConnection().close();
+        } catch (Exception e) {
+            new WarningMessage("Something went wrong while clear CurrencyDayCountDatabase . This is bad! Tell the dev.");
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            closeConnection();
+        }
+    }
     /**
      * Called when a player logs in, storing their data in memory
      *
@@ -359,6 +410,7 @@ public class PlayerData {
 
             if (resultSet.next()) {
                 this.currency = resultSet.getDouble("Currency");
+                this.currencyDayCount = resultSet.getDouble("CurrencyDayCount");
                 this.guildPrestigeLevel = resultSet.getInt("GuildPrestigeLevel");
                 this.maxGuildLevel = resultSet.getInt("GuildMaxLevel");
                 this.activeGuildLevel = resultSet.getInt("GuildActiveLevel");
@@ -399,6 +451,7 @@ public class PlayerData {
                     " (PlayerUUID," +
                     " DisplayName," +
                     " Currency," +
+                    " CurrencyDayCount," +
                     " GuildPrestigeLevel," +
                     " GuildMaxLevel," +
                     " GuildActiveLevel," +
@@ -412,6 +465,8 @@ public class PlayerData {
                     //display name
                     " '" + Bukkit.getPlayer(uuid).getName() + "'," +
                     //currency
+                    " 0," +
+                    //CurrencyDayCount
                     " 0," +
                     //guild_prestige_level
                     " 0," +
@@ -490,6 +545,7 @@ public class PlayerData {
                     "(PlayerUUID             TEXT PRIMARY KEY    NOT NULL," +
                     " DisplayName                       TEXT," +
                     " Currency                          REAL," +
+                    " CurrencyDayCount                  REAL," +
                     " GuildPrestigeLevel                 INT," +
                     " GuildMaxLevel                      INT," +
                     " GuildActiveLevel                   INT," +

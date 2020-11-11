@@ -3,6 +3,7 @@ package com.magmaguy.elitemobs.commands;
 import com.magmaguy.elitemobs.commands.admin.DebugScreen;
 import com.magmaguy.elitemobs.commands.admin.StatsCommand;
 import com.magmaguy.elitemobs.commands.admin.npc.NPCCommands;
+import com.magmaguy.elitemobs.playerdata.PlayerData;
 import com.magmaguy.elitemobs.thirdparty.discordsrv.DiscordSRVAnnouncement;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,7 +13,13 @@ public class AdminCommands {
     public static boolean parseAdminCommand(CommandSender commandSender, String[] args) {
 
         switch (args[0]) {
-
+            case "clear_day_currency":
+                if (CommandHandler.permCheck(CommandHandler.CLEAR_DAY_CURRENCY, commandSender))
+                {
+                    PlayerData.clearCurrencyDayCount();
+                    commandSender.sendMessage("success.");
+                }
+                return true;
             //autosetup
             case "setup":
                 if (CommandHandler.userPermCheck("elitemobs.*", commandSender))

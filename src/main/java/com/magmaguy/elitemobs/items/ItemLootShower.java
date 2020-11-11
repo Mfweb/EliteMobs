@@ -8,6 +8,7 @@ import com.magmaguy.elitemobs.config.EconomySettingsConfig;
 import com.magmaguy.elitemobs.economy.EconomyHandler;
 import com.magmaguy.elitemobs.items.customenchantments.SoulbindEnchantment;
 import com.magmaguy.elitemobs.playerdata.ElitePlayerInventory;
+import com.magmaguy.elitemobs.playerdata.PlayerData;
 import com.magmaguy.elitemobs.utils.ItemStackGenerator;
 import com.magmaguy.elitemobs.utils.Round;
 import com.magmaguy.elitemobs.utils.WarningMessage;
@@ -81,7 +82,9 @@ public class ItemLootShower implements Listener {
 
                     if (player.getLocation().distanceSquared(item.getLocation()) <= 1) {
                         item.remove();
-                        EconomyHandler.addCurrency(player.getUniqueId(), value);
+                        PlayerData.addCurrencyDayCount(player.getUniqueId(), value);
+                        double r = PlayerData.getCurrencyDayRatio(player.getUniqueId());
+                        EconomyHandler.addCurrency(player.getUniqueId(), value * r);
                         sendCurrencyNotification(player);
 
                         //cache for counting how much coin they're getting over a short amount of time
@@ -94,7 +97,7 @@ public class ItemLootShower implements Listener {
                                 TextComponent.fromLegacyText(
                                         ChatColorConverter.convert(EconomySettingsConfig.actionBarCurrencyShowerMessage
                                                 .replace("$currency_name", EconomySettingsConfig.currencyName)
-                                                .replace("$amount", Round.twoDecimalPlaces(playerCurrencyPickup.get(player)) + ""))));
+                                                .replace("$amount", Round.twoDecimalPlaces(playerCurrencyPickup.get(player) * r) + ""))));
                         coinValues.remove(this);
                         cancel();
                         return;
@@ -347,12 +350,13 @@ public class ItemLootShower implements Listener {
                     playerCurrencyPickup.put(player, playerCurrencyPickup.get(player) + amountIncremented);
                 else
                     playerCurrencyPickup.put(player, amountIncremented);
-
+                double r = PlayerData.getCurrencyDayRatio(player.getUniqueId());
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                         TextComponent.fromLegacyText(
                                 ChatColorConverter.convert(EconomySettingsConfig.actionBarCurrencyShowerMessage
+                                        .replace("$amount", String.format("%.2f", r * playerCurrencyPickup.get(player) - 0.005))
                                         .replace("$currency_name", EconomySettingsConfig.currencyName)
-                                        .replace("$amount", Round.twoDecimalPlaces(playerCurrencyPickup.get(player)) + ""))));
+                                )));
             }
         //}
     }
@@ -376,10 +380,14 @@ public class ItemLootShower implements Listener {
                     oldAmount = playerCurrencyPickup.get(player);
                     return;
                 }
-
+                double r = PlayerData.getCurrencyDayRatio(player.getUniqueId());
+                if(r < 1.0) {
+                    player.sendMessage("今日猎杀博格收益已达到上限，当前收益为:§c" + String.format("%.2f", r * 100 - 0.005) + "%");
+                }
                 player.sendMessage(ChatColorConverter.convert(EconomySettingsConfig.chatCurrencyShowerMessage
+                        .replace("$amount_real", String.format("%.2f", r * playerCurrencyPickup.get(player) - 0.005))
                         .replace("$currency_name", EconomySettingsConfig.currencyName)
-                        .replace("$amount", playerCurrencyPickup.get(player) + "")));
+                        .replace("$amount", String.format("%.2f", playerCurrencyPickup.get(player)))));
 
                 playerCurrencyPickup.remove(player);
                 sendAdventurersGuildNotification(player);
