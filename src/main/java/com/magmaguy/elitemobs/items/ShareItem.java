@@ -12,15 +12,19 @@ import org.bukkit.inventory.ItemStack;
 public class ShareItem {
 
     public static void showOnChat(Player player) {
-        if (player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) return;
+        if (player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
+            player.sendMessage("请将要分享的博格装备放在右手");
+            return;
+        }
         ItemStack itemStack = player.getInventory().getItemInMainHand();
-        if (!itemStack.hasItemMeta()) return;
-        if (!itemStack.getItemMeta().hasDisplayName()) return;
-        if (!itemStack.getItemMeta().hasLore()) return;
+        if (!itemStack.hasItemMeta() || !itemStack.getItemMeta().hasDisplayName() || !itemStack.getItemMeta().hasLore()) {
+            player.sendMessage("你只能分享有名字的博格装备！");
+            return;
+        }
 
         String name = itemStack.getItemMeta().getDisplayName();
 
-        TextComponent interactiveMessage = new TextComponent(player.getDisplayName() + ": " + name);
+        TextComponent interactiveMessage = new TextComponent("<" + player.getDisplayName() + ">" + " §f[" + name + "§f]");
         setItemHoverEvent(interactiveMessage, itemStack);
 
         for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers())

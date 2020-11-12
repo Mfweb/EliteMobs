@@ -382,10 +382,10 @@ public class ItemLootShower implements Listener {
                 }
                 double r = PlayerData.getCurrencyDayRatio(player.getUniqueId());
                 if(r < 1.0) {
-                    player.sendMessage("今日猎杀博格收益已达到上限，当前收益为:§c" + String.format("%.2f", r * 100 - 0.005) + "%");
+                    player.sendMessage("今日猎杀博格收益已达到上限，当前收益为:§c" + (r < 0.0001 ? "0.0%" : (String.format("%.2f", r * 100 - 0.005) + "%")));
                 }
                 player.sendMessage(ChatColorConverter.convert(EconomySettingsConfig.chatCurrencyShowerMessage
-                        .replace("$amount_real", String.format("%.2f", r * playerCurrencyPickup.get(player) - 0.005))
+                        .replace("$amount_real", String.format("%.2f", r * playerCurrencyPickup.get(player)))
                         .replace("$currency_name", EconomySettingsConfig.currencyName)
                         .replace("$amount", String.format("%.2f", playerCurrencyPickup.get(player)))));
 

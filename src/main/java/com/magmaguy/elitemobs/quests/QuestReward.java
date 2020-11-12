@@ -53,7 +53,7 @@ public class QuestReward implements Serializable {
             double r = PlayerData.getCurrencyDayRatio(player.getUniqueId());
             EconomyHandler.addCurrency(player.getUniqueId(), c * r);
             if(r < 1.0) {
-                player.sendMessage("今日猎杀博格收益已达到上限，当前收益为:§c" + String.format("%.2f", r * 100 - 0.005) + "%");
+                player.sendMessage("今日猎杀博格收益已达到上限，当前收益为:§c" + (r < 0.0001 ? "0.0%" : (String.format("%.2f", r * 100 - 0.005) + "%")));
             }
             player.sendMessage(QuestMenuConfig.rewardMessage
                     .replace("$reward", String.format("%.2f", c * r))
