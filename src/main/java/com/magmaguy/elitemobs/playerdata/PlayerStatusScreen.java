@@ -20,6 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.entity.*;
+import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -392,7 +394,9 @@ public class PlayerStatusScreen implements Listener {
                 customBossEntityIterator.remove();
                 continue;
             }
-            TextComponent message = new TextComponent(customBossEntity.bossBarMessage(player, customBossEntity.customBossConfigFields.getLocationMessage()) + "\n");
+            Location entityLocation = customBossEntity.getLivingEntity().getLocation();
+            String locationString = "X:" + (int) entityLocation.getX() + ", Y:" + (int) entityLocation.getY() + ", Z:" + (int) entityLocation.getZ();
+            TextComponent message = new TextComponent(customBossEntity.bossBarMessage(player, locationString) + "\n");
             message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(PlayerStatusMenuConfig.onBossTrackHover).create()));
             message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/elitemobs trackcustomboss " + player.getName() + " " + customBossEntity.uuid));
             textComponents.add(message);
