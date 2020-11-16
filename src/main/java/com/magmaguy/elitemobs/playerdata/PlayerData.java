@@ -79,7 +79,6 @@ public class PlayerData {
     }
 
     public static void setCurrencyDayCount(UUID uuid, double newCurrencyDayCount) {
-        setDatabaseValue(uuid, "CurrencyDayCount", newCurrencyDayCount);
         if (playerDataHashMap.containsKey(uuid))
             playerDataHashMap.get(uuid).currencyDayCount = newCurrencyDayCount;
     }
@@ -101,6 +100,13 @@ public class PlayerData {
             setCurrencyDayCount(k, 0);
         });
         clearCurrencyDayCountDatabase();
+    }
+
+    public static int saveCurrencyDayCount() {
+        playerDataHashMap.forEach((k, v)->{
+            setDatabaseValue(k, "CurrencyDayCount", v.currencyDayCount);
+        });
+        return playerDataHashMap.size();
     }
 
     public static int getGuildPrestigeLevel(UUID uuid) {
