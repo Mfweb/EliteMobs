@@ -56,6 +56,8 @@ public class SoulbindEnchantment extends CustomEnchantment {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (item == null)
+                    return;
                 ArmorStand soulboundPlayer = VisualArmorStand.VisualArmorStand(item.getLocation().clone().add(new Vector(0, -50, 0)), ChatColorConverter.convert(
                         EnchantmentsConfig.getEnchantment("soulbind.yml")
                                 .getFileConfiguration().getString("hologramString").replace("$player", player.getDisplayName())));
@@ -80,7 +82,6 @@ public class SoulbindEnchantment extends CustomEnchantment {
             }
         }.runTaskLater(MetadataHandler.PLUGIN, 20 * 3);
     }
-    
     private static final NamespacedKey SOULBIND_KEY = new NamespacedKey(MetadataHandler.PLUGIN, key);
     private static final NamespacedKey PRESTIGE_KEY = new NamespacedKey(MetadataHandler.PLUGIN, "prestige");
 
