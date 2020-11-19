@@ -2,3 +2,7 @@
 */target
 .DS_Store
 target/*
+.project
+.classpath
+.factorypath
+.settings

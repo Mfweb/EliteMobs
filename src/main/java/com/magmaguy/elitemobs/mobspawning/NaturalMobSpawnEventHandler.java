@@ -177,6 +177,12 @@ public class NaturalMobSpawnEventHandler implements Listener {
             int levelIncrement = SpawnRadiusDifficultyIncrementer.distanceFromSpawnLevelIncrease(spawnLocation);
             eliteMobLevel += levelIncrement;
         }
+        else {
+            int levelIncrement = SpawnRadiusDifficultyIncrementer.distanceFromSpawnLevelIncrease(spawnLocation);
+            //Bukkit.getLogger().info(String.format("%d, %d", levelIncrement, eliteMobLevel));
+            eliteMobLevel = (int)((double)eliteMobLevel * ((double)levelIncrement) / 100.0);
+            //Bukkit.getLogger().info(String.format("%d,%d", levelIncrement, eliteMobLevel));
+        }
 
         if (playerCount == 0 || eliteMobLevel < 1) return 0;
 
