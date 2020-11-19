@@ -222,7 +222,6 @@ public class EliteMobs extends JavaPlugin {
         //save cached data
         PlayerData.closeConnection();
         Bukkit.getLogger().info("[EliteMobs] Saving EliteMobs databases...");
-        Bukkit.getLogger().info(String.format("Saved User CurrencyDayCount: %d", PlayerData.saveCurrencyDayCount()));
         Bukkit.getLogger().info("[EliteMobs] All saved! Good night.");
 
     }
