@@ -6,3 +6,4 @@ target/*
 .classpath
 .factorypath
 .settings
+dependency-reduced-pom.xml
