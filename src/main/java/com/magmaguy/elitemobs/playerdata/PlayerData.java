@@ -3,6 +3,7 @@ package com.magmaguy.elitemobs.playerdata;
 import com.magmaguy.elitemobs.MetadataHandler;
 import com.magmaguy.elitemobs.quests.EliteQuest;
 import com.magmaguy.elitemobs.quests.PlayerQuests;
+import com.magmaguy.elitemobs.utils.DebugMessage;
 import com.magmaguy.elitemobs.utils.WarningMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,10 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import jdk.javadoc.internal.doclets.formats.html.resources.standard;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -430,78 +428,82 @@ public class PlayerData {
 
                         resultSet.close();
                         statement.close();
+                        new DebugMessage("Successfully obtained player data!");
+                        return;
+                    } else {
+                        currency = 0;
+                        currencyDayCount = 0;
+                        guildPrestigeLevel = 0;
+                        maxGuildLevel = 1;
+                        activeGuildLevel = 1;
+                        questStatus = null;
+                        score = 0;
+                        kills = 0;
+                        highestLevelKilled = 0;
+                        deaths = 0;
+                        questsCompleted = 0;
+
+                        playerDataHashMap.put(uuid, playerData);
+
+                        statement = getConnection().createStatement();
+                        String sql = "INSERT INTO " + player_data_table_name +
+                                " (PlayerUUID," +
+                                " DisplayName," +
+                                " Currency," +
+                                " CurrencyDayCount," +
+                                " GuildPrestigeLevel," +
+                                " GuildMaxLevel," +
+                                " GuildActiveLevel," +
+                                " Score," +
+                                " Kills," +
+                                " HighestLevelKilled," +
+                                " Deaths," +
+                                " QuestsCompleted) " +
+                                //identifier
+                                "VALUES ('" + uuid.toString() + "'," +
+                                //display name
+                                " '" + Bukkit.getPlayer(uuid).getName() + "'," +
+                                //currency
+                                " 0," +
+                                //CurrencyDayCount
+                                " 0," +
+                                //guild_prestige_level
+                                " 0," +
+                                //guild_max_level
+                                " 1," +
+                                //guild_active_level
+                                " 1," +
+                                //score
+                                "0," +
+                                //kills
+                                "0," +
+                                //highestLevelKilled
+                                "0," +
+                                //deaths
+                                "0," +
+                                //questsCompleted
+                                "0);";
+                        statement.executeUpdate(sql);
+
+                        statement.close();
+                        new DebugMessage("Successfully generated new player data entry!");
                         return;
                     }
-
-                    resultSet.close();
-                    statement.close();
                 } catch (Exception e) {
+                    if (statement != null) {
+                        try {
+                            statement.close();
+                        } catch (SQLException throwables) {
+                            new WarningMessage("Failed to close statement after failing player data creation!");
+                            throwables.printStackTrace();
+                        }
+                    }
                     new WarningMessage("Something went wrong while generating a new player entry. This is bad! Tell the dev.");
                     System.err.println(e.getClass().getName() + ": " + e.getMessage());
                 }
 
                 new WarningMessage("No player entry detected, generating new entry!");
 
-                try {
-                    statement = getConnection().createStatement();
-                    String sql = "INSERT INTO " + player_data_table_name +
-                            " (PlayerUUID," +
-                            " DisplayName," +
-                            " Currency," +
-                            " CurrencyDayCount," +
-                            " GuildPrestigeLevel," +
-                            " GuildMaxLevel," +
-                            " GuildActiveLevel," +
-                            " Score," +
-                            " Kills," +
-                            " HighestLevelKilled," +
-                            " Deaths," +
-                            " QuestsCompleted) " +
-                            //identifier
-                            "VALUES ('" + uuid.toString() + "'," +
-                            //display name
-                            " '" + Bukkit.getPlayer(uuid).getName() + "'," +
-                            //currency
-                            " 0," +
-                            //CurrencyDayCount
-                            " 0," +
-                            //guild_prestige_level
-                            " 0," +
-                            //guild_max_level
-                            " 1," +
-                            //guild_active_level
-                            " 1," +
-                            //score
-                            "0," +
-                            //kills
-                            "0," +
-                            //highestLevelKilled
-                            "0," +
-                            //deaths
-                            "0," +
-                            //questsCompleted
-                            "0);";
-                    statement.executeUpdate(sql);
-
-                    currency = 0;
-                    currencyDayCount = 0;
-                    guildPrestigeLevel = 0;
-                    maxGuildLevel = 1;
-                    activeGuildLevel = 1;
-                    questStatus = null;
-                    score = 0;
-                    kills = 0;
-                    highestLevelKilled = 0;
-                    deaths = 0;
-                    questsCompleted = 0;
-
-                    playerDataHashMap.put(uuid, playerData);
-
-                    statement.close();
-                } catch (Exception e) {
-                    new WarningMessage("Failed to generate an entry!");
-                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
-                }
             }
         }.runTaskAsynchronously(MetadataHandler.PLUGIN);
     }
