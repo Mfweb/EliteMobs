@@ -375,21 +375,23 @@ public class PlayerData {
     private PlayerQuests questStatus;
 
     private static void clearCurrencyDayCountDatabase() {
-        Statement statement = null;
-        try {
-            statement = getConnection().createStatement();
-            String sql;
-            sql = "UPDATE " + player_data_table_name + " SET CurrencyDayCount=0.0 WHERE 1;";
-            statement.executeUpdate(sql);
-            statement.close();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Statement statement = null;
+                try {
+                    statement = getConnection().createStatement();
+                    String sql;
+                    sql = "UPDATE " + player_data_table_name + " SET CurrencyDayCount=0.0 WHERE 1;";
+                    statement.executeUpdate(sql);
+                    statement.close();
 
-            getConnection().commit();
-            getConnection().close();
-        } catch (Exception e) {
-            new WarningMessage("Something went wrong while clear CurrencyDayCountDatabase . This is bad! Tell the dev.");
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            closeConnection();
-        }
+                } catch (Exception e) {
+                    new WarningMessage("Failed to update database value.");
+                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
+                }
+            }
+        }.runTaskAsynchronously(MetadataHandler.PLUGIN);
     }
     /**
      * Called when a player logs in, storing their data in memory
